@@ -516,11 +516,6 @@
     .ba-panel {
       position: absolute;
       inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      gap: 12px;
     }
 
     .ba-before {
@@ -528,12 +523,22 @@
     }
 
     .ba-after {
-      background: var(--white);
       clip-path: inset(0 50% 0 0);
       transition: none;
     }
 
+    .ba-panel img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+      pointer-events: none;
+    }
+
     .ba-label {
+      position: absolute;
+      bottom: 16px;
       font-size: 10px;
       font-weight: 700;
       letter-spacing: 0.3em;
@@ -542,93 +547,8 @@
       border: 1px solid currentColor;
     }
 
-    .ba-before .ba-label { color: #555; }
-    .ba-after .ba-label { color: var(--black); border-color: var(--black); }
-
-    .ba-before-text {
-      color: #333;
-      font-size: 13px;
-      letter-spacing: 0.05em;
-      font-family: var(--font-mono);
-    }
-
-    .ba-after-text {
-      color: var(--gray-400);
-      font-size: 13px;
-      letter-spacing: 0.05em;
-      font-family: var(--font-mono);
-    }
-
-    /* Mockup inside panels */
-    .ba-mockup {
-      width: 380px;
-      max-width: 80%;
-      background: #1a1a1a;
-      border-radius: 2px;
-      overflow: hidden;
-    }
-
-    .ba-after .ba-mockup {
-      background: #f0f0f0;
-    }
-
-    .ba-mock-bar {
-      height: 28px;
-      background: #222;
-      display: flex;
-      align-items: center;
-      padding: 0 12px;
-      gap: 6px;
-    }
-
-    .ba-after .ba-mock-bar { background: #ddd; }
-
-    .ba-mock-dot {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      background: #444;
-    }
-
-    .ba-after .ba-mock-dot { background: #bbb; }
-
-    .ba-mock-body {
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .ba-mock-h {
-      height: 14px;
-      background: #2a2a2a;
-      border-radius: 1px;
-      width: 60%;
-    }
-
-    .ba-after .ba-mock-h { background: #d0d0d0; }
-
-    .ba-mock-p {
-      height: 8px;
-      background: #222;
-      border-radius: 1px;
-    }
-
-    .ba-after .ba-mock-p { background: #e0e0e0; }
-    .ba-after .ba-mock-p:nth-child(2) { width: 90%; background: #e0e0e0; }
-    .ba-after .ba-mock-p:nth-child(3) { width: 75%; background: #e0e0e0; }
-
-    .ba-mock-p:nth-child(2) { width: 90%; }
-    .ba-mock-p:nth-child(3) { width: 75%; }
-
-    .ba-mock-btn {
-      height: 28px;
-      width: 80px;
-      margin-top: 8px;
-      background: #333;
-      border-radius: 1px;
-    }
-
-    .ba-after .ba-mock-btn { background: var(--red); }
+    .ba-before .ba-label { left: 16px; color: rgba(255,255,255,0.7); border-color: rgba(255,255,255,0.7); }
+    .ba-after .ba-label { right: 16px; color: var(--black); border-color: var(--black); background: rgba(255,255,255,0.85); }
 
     .ba-divider {
       position: absolute;
@@ -1064,39 +984,13 @@
     <div class="ba-container reveal reveal-delay-3" id="ba-container">
       <!-- Before panel -->
       <div class="ba-panel ba-before">
-        <div class="ba-mockup">
-          <div class="ba-mock-bar">
-            <div class="ba-mock-dot"></div>
-            <div class="ba-mock-dot"></div>
-            <div class="ba-mock-dot"></div>
-          </div>
-          <div class="ba-mock-body">
-            <div class="ba-mock-h"></div>
-            <div class="ba-mock-p" style="width:90%"></div>
-            <div class="ba-mock-p" style="width:75%"></div>
-            <div class="ba-mock-p" style="width:60%"></div>
-            <div class="ba-mock-btn"></div>
-          </div>
-        </div>
+        <img src="uploads/Kaklamanos After.png" alt="Before Nokto Group" />
         <div class="ba-label">Before</div>
       </div>
 
       <!-- After panel -->
       <div class="ba-panel ba-after" id="ba-after">
-        <div class="ba-mockup">
-          <div class="ba-mock-bar">
-            <div class="ba-mock-dot"></div>
-            <div class="ba-mock-dot"></div>
-            <div class="ba-mock-dot"></div>
-          </div>
-          <div class="ba-mock-body">
-            <div class="ba-mock-h" style="background:#222; width:55%"></div>
-            <div class="ba-mock-p" style="width:88%"></div>
-            <div class="ba-mock-p" style="width:72%"></div>
-            <div class="ba-mock-p" style="width:55%"></div>
-            <div class="ba-mock-btn"></div>
-          </div>
-        </div>
+        <img src="uploads/Kaklamanos Before.png" alt="After Nokto Group" />
         <div class="ba-label">After</div>
       </div>
 
