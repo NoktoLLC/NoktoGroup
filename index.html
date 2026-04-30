@@ -109,15 +109,14 @@
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--white);
-      background: var(--black);
+      background: linear-gradient(135deg, #e21717 0%, #aa0000 100%);
       padding: 10px 22px;
       text-decoration: none;
-      transition: background 0.2s, color 0.2s;
+      transition: opacity 0.2s;
     }
 
     #nav-cta:hover {
-      background: var(--red);
-      color: var(--white);
+      opacity: 0.85;
     }
 
     /* ── HERO ────────────────────────────────────────────── */
@@ -321,15 +320,15 @@
       letter-spacing: 0.15em;
       text-transform: uppercase;
       color: var(--white);
-      background: var(--black);
+      background: linear-gradient(135deg, #e21717 0%, #aa0000 100%);
       border: none;
       padding: 16px 36px;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: opacity 0.2s;
       width: 100%;
     }
 
-    .btn-primary:hover { background: var(--red); }
+    .btn-primary:hover { opacity: 0.85; }
 
     .form-note {
       font-size: 11px;
