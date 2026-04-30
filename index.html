@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nokto Group — Eclipse the Competition</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <style>
+    /* ── RESET & BASE ────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --white: #ffffff;
+      --black: #000000;
+      --red: #e21717;
+      --gray-100: #f7f7f7;
+      --gray-200: #eeeeee;
+      --gray-400: #999999;
+      --gray-600: #555555;
+      --font-main: 'Space Grotesk', sans-serif;
+      --font-mono: 'Space Mono', monospace;
+      --nav-height: 72px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-main);
+      background: var(--white);
+      color: var(--black);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── SCROLL PROGRESS ─────────────────────────────────── */
+    #progress-bar {
+      position: fixed;
+      top: 0; left: 0;
+      height: 2px;
+      width: 0%;
+      background: var(--red);
+      z-index: 9999;
+      transition: width 0.1s linear;
+    }
+
+    /* ── NAV ─────────────────────────────────────────────── */
+    #nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--nav-height);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      z-index: 1000;
+      transition: background 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    #nav.scrolled {
+      background: var(--white);
+      box-shadow: 0 1px 0 var(--gray-200);
+    }
+
+    #nav-logo img {
+      height: 36px;
+      object-fit: contain;
+    }
+
+    #nav-links {
+      display: flex;
+      gap: 40px;
+      list-style: none;
+    }
+
+    #nav-links a {
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--black);
+      text-decoration: none;
+      position: relative;
+      transition: color 0.2s;
+    }
+
+    #nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 0;
+      width: 0; height: 1px;
+      background: var(--red);
+      transition: width 0.25s ease;
+    }
+
+    #nav-links a:hover { color: var(--black); }
+    #nav-links a:hover::after { width: 100%; }
+
+    #nav-cta {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--white);
+      background: var(--black);
+      padding: 10px 22px;
+      text-decoration: none;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    #nav-cta:hover {
+      background: var(--red);
+      color: var(--white);
+    }
+
+    /* ── HERO ────────────────────────────────────────────── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 120px 48px 80px;
+      text-align: center;
+      position: relative;
+    }
+
+    #hero-logo {
+      width: min(360px, 70vw);
+      margin-bottom: 56px;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.9s cubic-bezier(0.22,1,0.36,1) 0.2s forwards;
+    }
+
+    #hero-tagline {
+      font-size: clamp(32px, 5vw, 64px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      max-width: 900px;
+      margin-bottom: 28px;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.9s cubic-bezier(0.22,1,0.36,1) 0.4s forwards;
+    }
+
+    #hero-tagline .tagline-nokto-logo {
+      display: inline-block;
+      vertical-align: middle;
+      height: 0.85em;
+      margin: 0 4px;
+      position: relative;
+      top: -0.04em;
+    }
+
+    #hero-tagline .tagline-accent {
+      color: var(--red);
+    }
+
+    #hero-sub {
+      font-size: 17px;
+      font-weight: 400;
+      color: var(--gray-600);
+      max-width: 520px;
+      line-height: 1.7;
+      margin-bottom: 64px;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.9s cubic-bezier(0.22,1,0.36,1) 0.6s forwards;
+    }
+
+    #hero-scroll-hint {
+      position: absolute;
+      bottom: 36px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      animation: fadeUp 0.9s cubic-bezier(0.22,1,0.36,1) 1.2s forwards;
+    }
+
+    #hero-scroll-hint span {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gray-400);
+    }
+
+    .scroll-arrow {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--gray-400), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+
+    /* ── CONTACT SECTION ─────────────────────────────────── */
+    #contact {
+      padding: 120px 48px;
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+
+    .section-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: clamp(28px, 4vw, 48px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      margin-bottom: 20px;
+    }
+
+    .section-body {
+      font-size: 16px;
+      color: var(--gray-600);
+      line-height: 1.75;
+    }
+
+    /* Contact form */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-field.full { grid-column: 1 / -1; }
+
+    .form-field label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--black);
+    }
+
+    .form-field input,
+    .form-field select {
+      font-family: var(--font-main);
+      font-size: 15px;
+      color: var(--black);
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      padding: 14px 16px;
+      outline: none;
+      transition: border-color 0.2s;
+      border-radius: 0;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .form-field input:focus,
+    .form-field select:focus {
+      border-color: var(--black);
+    }
+
+    .services-check-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+
+    .check-item input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--red);
+      cursor: pointer;
+    }
+
+    .check-item span {
+      font-size: 13px;
+      color: var(--gray-600);
+    }
+
+    .form-submit {
+      grid-column: 1 / -1;
+      margin-top: 8px;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      font-family: var(--font-main);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--white);
+      background: var(--black);
+      border: none;
+      padding: 16px 36px;
+      cursor: pointer;
+      transition: background 0.2s;
+      width: 100%;
+    }
+
+    .btn-primary:hover { background: var(--red); }
+
+    .form-note {
+      font-size: 11px;
+      color: var(--gray-400);
+      margin-top: 12px;
+      text-align: center;
+      letter-spacing: 0.03em;
+    }
+
+    /* ── DIVIDER ─────────────────────────────────────────── */
+    .full-divider {
+      width: 100%;
+      height: 1px;
+      background: var(--gray-200);
+    }
+
+    /* ── SERVICES SECTION ────────────────────────────────── */
+    #services {
+      padding: 120px 48px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    #services .section-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      margin-bottom: 80px;
+      align-items: end;
+    }
+
+    .pricing-note {
+      font-size: 14px;
+      color: var(--gray-600);
+      line-height: 1.7;
+      border-left: 2px solid var(--red);
+      padding-left: 20px;
+      margin-top: 24px;
+    }
+
+    /* Accordion */
+    .accordion {
+      border-top: 1px solid var(--gray-200);
+    }
+
+    .accordion-item {
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .accordion-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 28px 0;
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.2s;
+    }
+
+    .accordion-header:hover .acc-title { color: var(--red); }
+
+    .acc-num {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--gray-400);
+      margin-right: 24px;
+      min-width: 28px;
+    }
+
+    .acc-title {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      flex: 1;
+      transition: color 0.2s;
+    }
+
+    .acc-icon {
+      width: 24px;
+      height: 24px;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .acc-icon::before,
+    .acc-icon::after {
+      content: '';
+      position: absolute;
+      background: var(--black);
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .acc-icon::before {
+      width: 14px; height: 1px;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .acc-icon::after {
+      width: 1px; height: 14px;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .accordion-item.open .acc-icon::after {
+      transform: translate(-50%, -50%) rotate(90deg);
+      opacity: 0;
+    }
+
+    .accordion-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.45s cubic-bezier(0.22,1,0.36,1);
+    }
+
+    .accordion-item.open .accordion-body {
+      max-height: 400px;
+    }
+
+    .accordion-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      padding: 4px 0 36px 52px;
+    }
+
+    .accordion-content p {
+      font-size: 15px;
+      color: var(--gray-600);
+      line-height: 1.75;
+    }
+
+    .acc-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .acc-features li {
+      font-size: 13px;
+      color: var(--gray-600);
+      padding-left: 16px;
+      position: relative;
+    }
+
+    .acc-features li::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      color: var(--red);
+      font-size: 11px;
+    }
+
+    /* ── BEFORE/AFTER ────────────────────────────────────── */
+    #portfolio {
+      padding: 120px 48px;
+      background: var(--black);
+      color: var(--white);
+    }
+
+    #portfolio .inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    #portfolio .section-label { color: var(--red); }
+
+    #portfolio .section-title { color: var(--white); }
+
+    #portfolio .section-body { color: #888; }
+
+    .ba-container {
+      position: relative;
+      width: 100%;
+      height: 520px;
+      overflow: hidden;
+      cursor: col-resize;
+      user-select: none;
+      margin-top: 60px;
+      border: 1px solid #222;
+    }
+
+    .ba-panel {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .ba-before {
+      background: #111;
+    }
+
+    .ba-after {
+      background: var(--white);
+      clip-path: inset(0 50% 0 0);
+      transition: none;
+    }
+
+    .ba-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border: 1px solid currentColor;
+    }
+
+    .ba-before .ba-label { color: #555; }
+    .ba-after .ba-label { color: var(--black); border-color: var(--black); }
+
+    .ba-before-text {
+      color: #333;
+      font-size: 13px;
+      letter-spacing: 0.05em;
+      font-family: var(--font-mono);
+    }
+
+    .ba-after-text {
+      color: var(--gray-400);
+      font-size: 13px;
+      letter-spacing: 0.05em;
+      font-family: var(--font-mono);
+    }
+
+    /* Mockup inside panels */
+    .ba-mockup {
+      width: 380px;
+      max-width: 80%;
+      background: #1a1a1a;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .ba-after .ba-mockup {
+      background: #f0f0f0;
+    }
+
+    .ba-mock-bar {
+      height: 28px;
+      background: #222;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      gap: 6px;
+    }
+
+    .ba-after .ba-mock-bar { background: #ddd; }
+
+    .ba-mock-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #444;
+    }
+
+    .ba-after .ba-mock-dot { background: #bbb; }
+
+    .ba-mock-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .ba-mock-h {
+      height: 14px;
+      background: #2a2a2a;
+      border-radius: 1px;
+      width: 60%;
+    }
+
+    .ba-after .ba-mock-h { background: #d0d0d0; }
+
+    .ba-mock-p {
+      height: 8px;
+      background: #222;
+      border-radius: 1px;
+    }
+
+    .ba-after .ba-mock-p { background: #e0e0e0; }
+    .ba-after .ba-mock-p:nth-child(2) { width: 90%; background: #e0e0e0; }
+    .ba-after .ba-mock-p:nth-child(3) { width: 75%; background: #e0e0e0; }
+
+    .ba-mock-p:nth-child(2) { width: 90%; }
+    .ba-mock-p:nth-child(3) { width: 75%; }
+
+    .ba-mock-btn {
+      height: 28px;
+      width: 80px;
+      margin-top: 8px;
+      background: #333;
+      border-radius: 1px;
+    }
+
+    .ba-after .ba-mock-btn { background: var(--red); }
+
+    .ba-divider {
+      position: absolute;
+      top: 0; bottom: 0;
+      left: 50%;
+      width: 2px;
+      background: var(--white);
+      transform: translateX(-50%);
+      pointer-events: none;
+    }
+
+    .ba-handle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 40px;
+      height: 40px;
+      background: var(--white);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+    }
+
+    .ba-handle-arrows {
+      font-size: 14px;
+      color: var(--black);
+      letter-spacing: -2px;
+    }
+
+    /* ── FOOTER ──────────────────────────────────────────── */
+    #footer {
+      padding: 80px 48px 48px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr;
+      gap: 60px;
+      padding-bottom: 60px;
+      border-bottom: 1px solid var(--gray-200);
+      margin-bottom: 40px;
+    }
+
+    .footer-logo img {
+      height: 48px;
+      object-fit: contain;
+      margin-bottom: 20px;
+    }
+
+    .footer-tagline {
+      font-size: 13px;
+      color: var(--gray-600);
+      line-height: 1.7;
+      max-width: 260px;
+    }
+
+    .footer-col h4 {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .footer-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .footer-col a {
+      font-size: 14px;
+      color: var(--gray-600);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-col a:hover { color: var(--red); }
+
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-copy {
+      font-size: 12px;
+      color: var(--gray-400);
+      letter-spacing: 0.04em;
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 20px;
+    }
+
+    .footer-social a {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--black);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-social a:hover { color: var(--red); }
+
+    /* ── SCROLL ANIMATIONS ───────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+
+    /* ── KEYFRAMES ───────────────────────────────────────── */
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+
+    /* ── FORM SUCCESS ─────────────────────────────────────── */
+    #form-success {
+      display: none;
+      text-align: center;
+      padding: 48px 0;
+    }
+
+    #form-success .success-icon {
+      width: 48px; height: 48px;
+      border: 1px solid var(--red);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      color: var(--red);
+      font-size: 20px;
+    }
+
+    #form-success h3 {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    #form-success p {
+      font-size: 14px;
+      color: var(--gray-600);
+    }
+  </style>
+</head>
+<body>
+
+<!-- Scroll Progress -->
+<div id="progress-bar"></div>
+
+<!-- Navigation -->
+<nav id="nav">
+  <a href="#" id="nav-logo">
+    <img src="uploads/nokto_group_logo-1777572192624.png" alt="Nokto Group" />
+  </a>
+  <ul id="nav-links">
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#portfolio">Work</a></li>
+  </ul>
+  <a href="#contact" id="nav-cta">Get Started</a>
+</nav>
+
+<!-- Hero -->
+<section id="hero">
+  <img id="hero-logo" src="uploads/nokto_group_logo-1777572192624.png" alt="Nokto Group" />
+
+  <h1 id="hero-tagline">
+    Eclipse the Competition.<br />
+    That's the
+    <img class="tagline-nokto-logo" src="uploads/nokto_logo-1777572195921.png" alt="Nokto" />
+    <span class="tagline-accent">Effect.</span>
+  </h1>
+
+  <p id="hero-sub">
+    Premium marketing services for local businesses ready to stand out. Websites, photography, signage, strategy, and more — everything your brand deserves, all in one place.
+  </p>
+
+  <div id="hero-scroll-hint">
+    <div class="scroll-arrow"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- Contact Section -->
+<div class="full-divider"></div>
+
+<section id="contact">
+  <div>
+    <p class="section-label reveal">Let's Talk</p>
+    <h2 class="section-title reveal reveal-delay-1">Ready to upgrade your brand?</h2>
+    <p class="section-body reveal reveal-delay-2">
+      Tell us about your business and what you're looking to achieve. We'll come back with a custom plan built around your goals — no pressure, no cookie-cutter packages.
+    </p>
+    <p class="section-body reveal reveal-delay-3" style="margin-top:20px; font-size:14px; color:#999;">
+      Every engagement includes dedicated support and room to grow. You only pay for what you need.
+    </p>
+  </div>
+
+  <div class="reveal reveal-delay-1">
+    <form id="contact-form" class="form-grid" novalidate>
+      <div class="form-field">
+        <label for="f-name">Your Name</label>
+        <input type="text" id="f-name" name="name" placeholder="Jane Smith" required />
+      </div>
+      <div class="form-field">
+        <label for="f-biz">Business Name</label>
+        <input type="text" id="f-biz" name="business" placeholder="Acme Co." required />
+      </div>
+      <div class="form-field">
+        <label for="f-email">Email Address</label>
+        <input type="email" id="f-email" name="email" placeholder="jane@acmeco.com" required />
+      </div>
+      <div class="form-field">
+        <label for="f-phone">Phone Number</label>
+        <input type="tel" id="f-phone" name="phone" placeholder="(555) 000-0000" />
+      </div>
+      <div class="form-field full">
+        <label>Services Interested In</label>
+        <div class="services-check-grid">
+          <label class="check-item"><input type="checkbox" name="services" value="website" /><span>Website Design</span></label>
+          <label class="check-item"><input type="checkbox" name="services" value="photography" /><span>Photography</span></label>
+          <label class="check-item"><input type="checkbox" name="services" value="signage" /><span>Signage &amp; Logos</span></label>
+          <label class="check-item"><input type="checkbox" name="services" value="strategy" /><span>Marketing Strategy</span></label>
+          <label class="check-item"><input type="checkbox" name="services" value="email" /><span>Email Campaigns</span></label>
+          <label class="check-item"><input type="checkbox" name="services" value="flyers" /><span>Flyer Design</span></label>
+          <label class="check-item"><input type="checkbox" name="services" value="hosting" /><span>Website Hosting</span></label>
+        </div>
+      </div>
+      <div class="form-submit">
+        <button type="submit" class="btn-primary">Send My Request</button>
+        <p class="form-note">We typically respond within one business day.</p>
+      </div>
+    </form>
+    <div id="form-success">
+      <div class="success-icon">✓</div>
+      <h3>Message received.</h3>
+      <p>We'll be in touch within one business day.</p>
+    </div>
+  </div>
+</section>
+
+<div class="full-divider"></div>
+
+<!-- Services Section -->
+<section id="services">
+  <div class="section-header">
+    <div>
+      <p class="section-label reveal">What We Do</p>
+      <h2 class="section-title reveal reveal-delay-1">Everything your brand needs, under one roof.</h2>
+    </div>
+    <div class="reveal reveal-delay-2">
+      <p class="section-body">One subscription unlocks access to our full suite of services. We build custom packages so you only pay for what moves your business forward.</p>
+      <p class="pricing-note">All plans include dedicated support, ongoing consultation, and room to scale as your business grows.</p>
+    </div>
+  </div>
+
+  <div class="accordion reveal">
+
+    <div class="accordion-item">
+      <div class="accordion-header">
+        <span class="acc-num">01</span>
+        <span class="acc-title">Website Design</span>
+        <div class="acc-icon"></div>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          <p>Custom, responsive websites engineered for your brand and built to convert visitors into loyal customers. We handle design, development, and launch — you own the result.</p>
+          <ul class="acc-features">
+            <li>Custom design tailored to your brand</li>
+            <li>Mobile-first, fully responsive</li>
+            <li>SEO foundations built in</li>
+            <li>Contact forms and lead capture</li>
+            <li>Delivered with full ownership</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <div class="accordion-header">
+        <span class="acc-num">02</span>
+        <span class="acc-title">Professional Photography</span>
+        <div class="acc-icon"></div>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          <p>First impressions are visual. Our professional photography service elevates your brand presence across all platforms — from your website to social and print materials.</p>
+          <ul class="acc-features">
+            <li>Product and service photography</li>
+            <li>Team and headshot sessions</li>
+            <li>Location and storefront shoots</li>
+            <li>Fully licensed, print-ready files</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <div class="accordion-header">
+        <span class="acc-num">03</span>
+        <span class="acc-title">Custom Signage &amp; Logo Design</span>
+        <div class="acc-icon"></div>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          <p>Your identity should be unmistakable at every touchpoint. We design logos, signage, and visual systems that carry weight — in-store, online, and everywhere your brand appears.</p>
+          <ul class="acc-features">
+            <li>Logo design with full brand guide</li>
+            <li>Indoor and outdoor signage</li>
+            <li>Vehicle wraps and window graphics</li>
+            <li>All formats delivered (print + digital)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <div class="accordion-header">
+        <span class="acc-num">04</span>
+        <span class="acc-title">Marketing Strategy &amp; Consulting</span>
+        <div class="acc-icon"></div>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          <p>We go beyond execution. Our consulting sessions deliver real strategy — positioning, audience targeting, competitive analysis, and a roadmap aligned with your goals.</p>
+          <ul class="acc-features">
+            <li>Brand positioning and messaging</li>
+            <li>Competitive market analysis</li>
+            <li>Campaign planning and calendars</li>
+            <li>Ongoing strategy reviews</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <div class="accordion-header">
+        <span class="acc-num">05</span>
+        <span class="acc-title">Automated Email Campaigns</span>
+        <div class="acc-icon"></div>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          <p>Stay top-of-mind with your customers without lifting a finger. We write, design, and automate email sequences that nurture leads and bring repeat business — on autopilot.</p>
+          <ul class="acc-features">
+            <li>Welcome and onboarding flows</li>
+            <li>Promotional and seasonal campaigns</li>
+            <li>Re-engagement sequences</li>
+            <li>Reporting and open-rate optimization</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <div class="accordion-header">
+        <span class="acc-num">06</span>
+        <span class="acc-title">Professionally Designed Flyers</span>
+        <div class="acc-icon"></div>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          <p>Print and digital flyers that look like they came from a Madison Avenue agency. Promotions, events, grand openings — we make the material that makes people stop and look.</p>
+          <ul class="acc-features">
+            <li>Print-ready files (300dpi)</li>
+            <li>Digital versions for email and social</li>
+            <li>Fast turnaround options available</li>
+            <li>Brand-consistent with all other materials</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <div class="accordion-header">
+        <span class="acc-num">07</span>
+        <span class="acc-title">Website Hosting</span>
+        <div class="acc-icon"></div>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          <p>Reliable, managed hosting for a predictable monthly fee. We handle security updates, backups, and uptime monitoring — so you never have to think about it.</p>
+          <ul class="acc-features">
+            <li>Managed updates and security patches</li>
+            <li>Daily backups</li>
+            <li>99.9% uptime guarantee</li>
+            <li>Support included with every plan</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="full-divider"></div>
+
+<!-- Before / After Portfolio -->
+<section id="portfolio">
+  <div class="inner">
+    <p class="section-label reveal">The Nokto Effect</p>
+    <h2 class="section-title reveal reveal-delay-1">See the difference.</h2>
+    <p class="section-body reveal reveal-delay-2" style="margin-top:12px;">Drag to compare a brand before and after working with Nokto Group.</p>
+
+    <div class="ba-container reveal reveal-delay-3" id="ba-container">
+      <!-- Before panel -->
+      <div class="ba-panel ba-before">
+        <div class="ba-mockup">
+          <div class="ba-mock-bar">
+            <div class="ba-mock-dot"></div>
+            <div class="ba-mock-dot"></div>
+            <div class="ba-mock-dot"></div>
+          </div>
+          <div class="ba-mock-body">
+            <div class="ba-mock-h"></div>
+            <div class="ba-mock-p" style="width:90%"></div>
+            <div class="ba-mock-p" style="width:75%"></div>
+            <div class="ba-mock-p" style="width:60%"></div>
+            <div class="ba-mock-btn"></div>
+          </div>
+        </div>
+        <div class="ba-label">Before</div>
+      </div>
+
+      <!-- After panel -->
+      <div class="ba-panel ba-after" id="ba-after">
+        <div class="ba-mockup">
+          <div class="ba-mock-bar">
+            <div class="ba-mock-dot"></div>
+            <div class="ba-mock-dot"></div>
+            <div class="ba-mock-dot"></div>
+          </div>
+          <div class="ba-mock-body">
+            <div class="ba-mock-h" style="background:#222; width:55%"></div>
+            <div class="ba-mock-p" style="width:88%"></div>
+            <div class="ba-mock-p" style="width:72%"></div>
+            <div class="ba-mock-p" style="width:55%"></div>
+            <div class="ba-mock-btn"></div>
+          </div>
+        </div>
+        <div class="ba-label">After</div>
+      </div>
+
+      <!-- Divider & Handle -->
+      <div class="ba-divider" id="ba-divider"></div>
+      <div class="ba-handle" id="ba-handle">
+        <span class="ba-handle-arrows">◀▶</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div id="footer">
+    <div class="footer-top">
+      <div class="footer-logo">
+        <img src="uploads/nokto_group_logo-1777572192624.png" alt="Nokto Group" />
+        <p class="footer-tagline">Premium marketing services for local businesses ready to eclipse the competition.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="#services">Website Design</a></li>
+          <li><a href="#services">Photography</a></li>
+          <li><a href="#services">Signage &amp; Logos</a></li>
+          <li><a href="#services">Email Campaigns</a></li>
+          <li><a href="#services">Hosting</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="#contact">Get a Quote</a></li>
+          <li><a href="https://instagram.com" target="_blank">Instagram</a></li>
+          <li><a href="https://facebook.com" target="_blank">Facebook</a></li>
+          <li><a href="https://linkedin.com" target="_blank">LinkedIn</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2026 Nokto Group, LLC. A branch of Nokto.</p>
+      <div class="footer-social">
+        <a href="https://instagram.com" target="_blank">IG</a>
+        <a href="https://facebook.com" target="_blank">FB</a>
+        <a href="https://linkedin.com" target="_blank">LI</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Tweaks Mount -->
+<div id="tweaks-root"></div>
+
+<!-- Main JS -->
+<script>
+  // Scroll progress
+  const progressBar = document.getElementById('progress-bar');
+  function updateProgress() {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    progressBar.style.width = (scrollTop / docHeight * 100) + '%';
+  }
+
+  // Nav scroll fill
+  const nav = document.getElementById('nav');
+  function updateNav() {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+  }
+
+  window.addEventListener('scroll', () => { updateProgress(); updateNav(); }, { passive: true });
+
+  // Reveal on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealObserver.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => revealObserver.observe(el));
+
+  // Accordion
+  document.querySelectorAll('.accordion-header').forEach(header => {
+    header.addEventListener('click', () => {
+      const item = header.parentElement;
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.accordion-item.open').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    });
+  });
+
+  // Before/After slider
+  const baContainer = document.getElementById('ba-container');
+  const baAfter = document.getElementById('ba-after');
+  const baDivider = document.getElementById('ba-divider');
+  const baHandle = document.getElementById('ba-handle');
+  let isDragging = false;
+
+  function setBAPos(pct) {
+    pct = Math.max(5, Math.min(95, pct));
+    baAfter.style.clipPath = `inset(0 ${100 - pct}% 0 0)`;
+    baDivider.style.left = pct + '%';
+    baHandle.style.left = pct + '%';
+  }
+
+  setBAPos(50);
+
+  function getBA(e) {
+    const rect = baContainer.getBoundingClientRect();
+    const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+    return (x / rect.width) * 100;
+  }
+
+  baContainer.addEventListener('mousedown', e => { isDragging = true; setBAPos(getBA(e)); });
+  window.addEventListener('mousemove', e => { if (isDragging) setBAPos(getBA(e)); });
+  window.addEventListener('mouseup', () => { isDragging = false; });
+  baContainer.addEventListener('touchstart', e => { isDragging = true; setBAPos(getBA(e)); }, { passive: true });
+  window.addEventListener('touchmove', e => { if (isDragging) setBAPos(getBA(e)); }, { passive: true });
+  window.addEventListener('touchend', () => { isDragging = false; });
+
+  // Contact form
+  document.getElementById('contact-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    this.style.display = 'none';
+    document.getElementById('form-success').style.display = 'block';
+  });
+</script>
+
+<!-- Tweaks Panel -->
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel">
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "accentColor": "#e21717",
+  "fontScale": 80,
+  "spacing": "compact",
+  "heroLayout": "centered"
+}/*EDITMODE-END*/;
+
+function NoktoTweaks() {
+  const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
+
+  React.useEffect(() => {
+    document.documentElement.style.setProperty('--red', tweaks.accentColor);
+    document.documentElement.style.setProperty('font-size', (tweaks.fontScale / 100) + 'em');
+  }, [tweaks.accentColor, tweaks.fontScale]);
+
+  React.useEffect(() => {
+    const factor = tweaks.spacing === 'compact' ? '80px' : tweaks.spacing === 'spacious' ? '160px' : '120px';
+    document.querySelectorAll('#services, #portfolio, #contact').forEach(el => {
+      el.style.paddingTop = factor;
+      el.style.paddingBottom = factor;
+    });
+  }, [tweaks.spacing]);
+
+  return React.createElement(TweaksPanel, null,
+    React.createElement(TweakSection, { title: 'Brand' },
+      React.createElement(TweakColor, { label: 'Accent Color', value: tweaks.accentColor, onChange: v => setTweak('accentColor', v) })
+    ),
+    React.createElement(TweakSection, { title: 'Typography' },
+      React.createElement(TweakSlider, { label: 'Font Scale', value: tweaks.fontScale, min: 80, max: 120, step: 1, unit: '%', onChange: v => setTweak('fontScale', v) })
+    ),
+    React.createElement(TweakSection, { title: 'Layout' },
+      React.createElement(TweakRadio, {
+        label: 'Section Spacing',
+        value: tweaks.spacing,
+        options: [{ value: 'compact', label: 'Compact' }, { value: 'comfortable', label: 'Default' }, { value: 'spacious', label: 'Spacious' }],
+        onChange: v => setTweak('spacing', v)
+      })
+    )
+  );
+}
+
+const tweaksRoot = document.getElementById('tweaks-root');
+ReactDOM.createRoot(tweaksRoot).render(React.createElement(NoktoTweaks));
+</script>
+
+</body>
+</html>
