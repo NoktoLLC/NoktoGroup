@@ -693,6 +693,142 @@
     .reveal-delay-2 { transition-delay: 0.2s; }
     .reveal-delay-3 { transition-delay: 0.3s; }
 
+    /* ── SERVICES SLIDESHOW ──────────────────────────────── */
+    .services-carousel {
+      position: relative;
+      height: 100vh;
+      overflow: hidden;
+      background: var(--black);
+    }
+
+    .carousel-track {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .carousel-slide {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      opacity: 0;
+      transition: opacity 0.75s ease;
+      pointer-events: none;
+    }
+
+    .carousel-slide.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .slide-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.25) 0%,
+        rgba(0, 0, 0, 0.60) 100%
+      );
+    }
+
+    .slide-content {
+      position: absolute;
+      bottom: 14%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(720px, 88vw);
+      text-align: center;
+      color: var(--white);
+      z-index: 2;
+    }
+
+    .slide-number {
+      display: block;
+      font-family: var(--font-main);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #ff4040;
+      margin-bottom: 16px;
+    }
+
+    .slide-title {
+      font-family: var(--font-main);
+      font-size: clamp(38px, 7vw, 84px);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-bottom: 24px;
+    }
+
+    .slide-desc {
+      font-family: var(--font-main);
+      font-size: clamp(15px, 1.5vw, 17px);
+      font-weight: 300;
+      line-height: 1.75;
+      color: rgba(255, 255, 255, 0.82);
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .carousel-controls {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      z-index: 10;
+    }
+
+    .carousel-btn {
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 44px;
+      min-height: 44px;
+      padding: 8px;
+      transition: color 0.2s ease;
+      cursor: pointer;
+    }
+
+    .carousel-btn:hover { color: var(--white); }
+
+    .carousel-dots { display: flex; align-items: center; gap: 10px; }
+
+    .dot-btn {
+      position: relative;
+      background: none;
+      border: none;
+      min-width: 44px;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .dot-btn::after {
+      content: '';
+      width: 7px;
+      height: 7px;
+      background: rgba(255, 255, 255, 0.35);
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+
+    .dot-btn.active::after {
+      background: var(--red);
+      transform: scale(1.5);
+      box-shadow: 0 0 6px rgba(226, 23, 23, 0.6);
+    }
+
     /* ── KEYFRAMES ───────────────────────────────────────── */
     @keyframes fadeUp {
       to { opacity: 1; transform: translateY(0); }
@@ -833,6 +969,64 @@
 </section>
 
 </div><!-- /contact-section -->
+
+<!-- Services Slideshow -->
+<section class="services-carousel" id="services-slideshow" aria-label="Our Services" tabindex="0">
+  <div class="carousel-track" role="list">
+
+    <article class="carousel-slide active" role="listitem" aria-label="Web Design" style="background-image:url('uploads/web-design.jpeg')">
+      <div class="slide-overlay" aria-hidden="true"></div>
+      <div class="slide-content">
+        <span class="slide-number" aria-hidden="true">01</span>
+        <h2 class="slide-title">Web Design</h2>
+        <p class="slide-desc">Professionally crafted websites that convert visitors into customers. Built for performance, built to impress.</p>
+      </div>
+    </article>
+
+    <article class="carousel-slide" role="listitem" aria-label="Professional Photography" style="background-image:url('uploads/photography.jpeg')">
+      <div class="slide-overlay" aria-hidden="true"></div>
+      <div class="slide-content">
+        <span class="slide-number" aria-hidden="true">02</span>
+        <h2 class="slide-title">Professional Photography</h2>
+        <p class="slide-desc">Interior and exterior shoots that elevate your Google Business profile and show customers your best side.</p>
+      </div>
+    </article>
+
+    <article class="carousel-slide" role="listitem" aria-label="Custom Art and Signage" style="background-image:url('uploads/signage.jpeg')">
+      <div class="slide-overlay" aria-hidden="true"></div>
+      <div class="slide-content">
+        <span class="slide-number" aria-hidden="true">03</span>
+        <h2 class="slide-title">Custom Art &amp; Signage</h2>
+        <p class="slide-desc">Handcrafted wooden signs and wall art made to order. Distinctive pieces that define your space.</p>
+      </div>
+    </article>
+
+    <article class="carousel-slide" role="listitem" aria-label="Premium Services" style="background-image:url('uploads/premium-services.jpeg')">
+      <div class="slide-overlay" aria-hidden="true"></div>
+      <div class="slide-content">
+        <span class="slide-number" aria-hidden="true">04</span>
+        <h2 class="slide-title">Premium Services</h2>
+        <p class="slide-desc">Custom solutions built around your business — booking systems, productivity tools, and more. We set you up right.</p>
+      </div>
+    </article>
+
+  </div>
+
+  <div class="carousel-controls" aria-label="Carousel navigation">
+    <button class="carousel-btn" id="carouselPrev" aria-label="Previous service">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </button>
+    <div class="carousel-dots" role="tablist" aria-label="Service slides">
+      <button class="dot-btn active" role="tab" aria-selected="true"  aria-label="Web Design"               data-index="0"></button>
+      <button class="dot-btn"        role="tab" aria-selected="false" aria-label="Professional Photography"  data-index="1"></button>
+      <button class="dot-btn"        role="tab" aria-selected="false" aria-label="Custom Art and Signage"    data-index="2"></button>
+      <button class="dot-btn"        role="tab" aria-selected="false" aria-label="Premium Services"          data-index="3"></button>
+    </div>
+    <button class="carousel-btn" id="carouselNext" aria-label="Next service">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</section>
 
 <div class="full-divider"></div>
 
@@ -1124,6 +1318,76 @@
   baContainer.addEventListener('touchstart', e => { isDragging = true; setBAPos(getBA(e)); }, { passive: true });
   window.addEventListener('touchmove', e => { if (isDragging) setBAPos(getBA(e)); }, { passive: true });
   window.addEventListener('touchend', () => { isDragging = false; });
+
+  // Services Carousel
+  (function initCarousel() {
+    const carousel  = document.querySelector('.services-carousel');
+    const slides    = document.querySelectorAll('.carousel-slide');
+    const dots      = document.querySelectorAll('.dot-btn');
+    const prevBtn   = document.getElementById('carouselPrev');
+    const nextBtn   = document.getElementById('carouselNext');
+
+    if (!carousel || !slides.length) return;
+
+    let current   = 0;
+    let animating = false;
+    let autoTimer = null;
+
+    function goTo(index) {
+      if (animating) return;
+      animating = true;
+      slides[current].classList.remove('active');
+      dots[current].classList.remove('active');
+      dots[current].setAttribute('aria-selected', 'false');
+      current = ((index % slides.length) + slides.length) % slides.length;
+      slides[current].classList.add('active');
+      dots[current].classList.add('active');
+      dots[current].setAttribute('aria-selected', 'true');
+      setTimeout(() => { animating = false; }, 800);
+    }
+
+    function next() { goTo(current + 1); }
+    function prev() { goTo(current - 1); }
+
+    carousel.addEventListener('mousemove', (e) => {
+      const rect = carousel.getBoundingClientRect();
+      carousel.style.cursor = e.clientX < rect.left + rect.width / 2 ? 'w-resize' : 'e-resize';
+    });
+    carousel.addEventListener('mouseleave', () => { carousel.style.cursor = ''; });
+    carousel.addEventListener('click', (e) => {
+      if (e.target.closest('.carousel-controls')) return;
+      const rect = carousel.getBoundingClientRect();
+      e.clientX < rect.left + rect.width / 2 ? prev() : next();
+      resetAuto();
+    });
+
+    prevBtn?.addEventListener('click', (e) => { e.stopPropagation(); prev(); resetAuto(); });
+    nextBtn?.addEventListener('click', (e) => { e.stopPropagation(); next(); resetAuto(); });
+    dots.forEach((dot, i) => {
+      dot.addEventListener('click', (e) => { e.stopPropagation(); goTo(i); resetAuto(); });
+    });
+
+    carousel.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft')  { prev(); resetAuto(); }
+      if (e.key === 'ArrowRight') { next(); resetAuto(); }
+    });
+
+    let touchX = 0;
+    carousel.addEventListener('touchstart', (e) => { touchX = e.touches[0].clientX; }, { passive: true });
+    carousel.addEventListener('touchend', (e) => {
+      const diff = touchX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 48) { diff > 0 ? next() : prev(); resetAuto(); }
+    }, { passive: true });
+
+    function startAuto() { autoTimer = setInterval(next, 5500); }
+    function resetAuto() { clearInterval(autoTimer); startAuto(); }
+
+    carousel.addEventListener('mouseenter', () => clearInterval(autoTimer));
+    carousel.addEventListener('mouseleave', () => startAuto());
+
+    goTo(0);
+    startAuto();
+  })();
 
   // Contact form
   document.getElementById('contact-form').addEventListener('submit', function(e) {
