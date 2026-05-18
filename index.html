@@ -829,6 +829,40 @@
       box-shadow: 0 0 6px rgba(226, 23, 23, 0.6);
     }
 
+    /* ── CAROUSEL CUSTOM CURSOR ──────────────────────────── */
+    #carousel-cursor {
+      position: fixed;
+      top: 0; left: 0;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 2px 16px rgba(0,0,0,0.22);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.72);
+      transition: opacity 0.18s ease, transform 0.18s ease;
+      will-change: transform;
+    }
+
+    #carousel-cursor.visible {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    #carousel-cursor svg {
+      display: block;
+      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
+    }
+
+    #carousel-cursor.prev svg {
+      transform: scaleX(-1);
+    }
+
     /* ── KEYFRAMES ───────────────────────────────────────── */
     @keyframes fadeUp {
       to { opacity: 1; transform: translateY(0); }
@@ -871,6 +905,13 @@
   </style>
 </head>
 <body>
+
+<!-- Carousel Custom Cursor -->
+<div id="carousel-cursor" aria-hidden="true">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5 12h14M12 5l7 7-7 7"/>
+  </svg>
+</div>
 
 <!-- Scroll Progress -->
 <div id="progress-bar"></div>
@@ -1349,11 +1390,31 @@
     function next() { goTo(current + 1); }
     function prev() { goTo(current - 1); }
 
+    const customCursor = document.getElementById('carousel-cursor');
+
+    function moveCursor(e) {
+      if (customCursor) {
+        customCursor.style.left = e.clientX + 'px';
+        customCursor.style.top  = e.clientY + 'px';
+        const rect = carousel.getBoundingClientRect();
+        const isLeft = e.clientX < rect.left + rect.width / 2;
+        customCursor.classList.toggle('prev', isLeft);
+      }
+    }
+
     carousel.addEventListener('mousemove', (e) => {
-      const rect = carousel.getBoundingClientRect();
-      carousel.style.cursor = e.clientX < rect.left + rect.width / 2 ? 'w-resize' : 'e-resize';
+      moveCursor(e);
     });
-    carousel.addEventListener('mouseleave', () => { carousel.style.cursor = ''; });
+    carousel.addEventListener('mouseenter', (e) => {
+      if (customCursor) customCursor.classList.add('visible');
+      carousel.style.cursor = 'none';
+      clearInterval(autoTimer);
+    });
+    carousel.addEventListener('mouseleave', () => {
+      if (customCursor) customCursor.classList.remove('visible');
+      carousel.style.cursor = '';
+      startAuto();
+    });
     carousel.addEventListener('click', (e) => {
       if (e.target.closest('.carousel-controls')) return;
       const rect = carousel.getBoundingClientRect();
@@ -1382,8 +1443,6 @@
     function startAuto() { autoTimer = setInterval(next, 5500); }
     function resetAuto() { clearInterval(autoTimer); startAuto(); }
 
-    carousel.addEventListener('mouseenter', () => clearInterval(autoTimer));
-    carousel.addEventListener('mouseleave', () => startAuto());
 
     goTo(0);
     startAuto();
