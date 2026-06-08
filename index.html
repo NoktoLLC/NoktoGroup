@@ -77,8 +77,21 @@
 
     #nav-links {
       display: flex;
-      gap: 40px;
+      align-items: center;
       list-style: none;
+    }
+
+    #nav-links li {
+      display: flex;
+      align-items: center;
+    }
+
+    #nav-links li:not(:last-child)::after {
+      content: '';
+      width: 1px;
+      height: 14px;
+      background: rgba(0, 0, 0, 0.14);
+      margin: 0 26px;
     }
 
     #nav-links a {
@@ -88,21 +101,15 @@
       text-transform: uppercase;
       color: var(--black);
       text-decoration: none;
-      position: relative;
-      transition: color 0.2s;
+      padding: 8px 16px;
+      border-radius: 999px;
+      transition: background 0.2s ease, color 0.2s ease;
     }
 
-    #nav-links a::after {
-      content: '';
-      position: absolute;
-      bottom: -2px; left: 0;
-      width: 0; height: 1px;
-      background: var(--red);
-      transition: width 0.25s ease;
+    #nav-links a:hover {
+      background: var(--gray-100);
+      color: var(--red);
     }
-
-    #nav-links a:hover { color: var(--black); }
-    #nav-links a:hover::after { width: 100%; }
 
     #nav-cta {
       font-size: 12px;
