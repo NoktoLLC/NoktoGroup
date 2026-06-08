@@ -268,7 +268,8 @@
     }
 
     .form-field input:not([type="checkbox"]),
-    .form-field select {
+    .form-field select,
+    .form-field textarea {
       font-family: var(--font-main);
       font-size: 15px;
       color: var(--black);
@@ -282,35 +283,16 @@
       appearance: none;
     }
 
+    .form-field textarea {
+      resize: vertical;
+      min-height: 120px;
+      line-height: 1.6;
+    }
+
     .form-field input:focus,
-    .form-field select:focus {
+    .form-field select:focus,
+    .form-field textarea:focus {
       border-color: var(--black);
-    }
-
-    .services-check-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 4px;
-    }
-
-    .check-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      cursor: pointer;
-    }
-
-    .check-item input[type="checkbox"] {
-      width: 16px;
-      height: 16px;
-      accent-color: var(--red);
-      cursor: pointer;
-    }
-
-    .check-item span {
-      font-size: 13px;
-      color: var(--gray-600);
     }
 
     .form-submit {
@@ -985,16 +967,8 @@
         <input type="tel" id="f-phone" name="phone" placeholder="(555) 000-0000" />
       </div>
       <div class="form-field full">
-        <label>Services Interested In</label>
-        <div class="services-check-grid">
-          <label class="check-item"><input type="checkbox" name="services" value="website" /><span>Website Design</span></label>
-          <label class="check-item"><input type="checkbox" name="services" value="photography" /><span>Photography</span></label>
-          <label class="check-item"><input type="checkbox" name="services" value="signage" /><span>Signage &amp; Logos</span></label>
-          <label class="check-item"><input type="checkbox" name="services" value="strategy" /><span>Marketing Strategy</span></label>
-          <label class="check-item"><input type="checkbox" name="services" value="email" /><span>Email Campaigns</span></label>
-          <label class="check-item"><input type="checkbox" name="services" value="flyers" /><span>Flyer Design</span></label>
-          <label class="check-item"><input type="checkbox" name="services" value="hosting" /><span>Website Hosting</span></label>
-        </div>
+        <label for="f-message">Tell Us What You're Looking For</label>
+        <textarea id="f-message" name="message" rows="5" placeholder="Website design, photography, signage, marketing strategy, hosting — tell us what you need and we'll take it from there."></textarea>
       </div>
       <div class="form-submit">
         <button type="submit" class="btn-primary">Send My Request</button>
