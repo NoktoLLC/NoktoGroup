@@ -853,6 +853,78 @@
       transform: scaleX(-1);
     }
 
+    /* ── STYLE SWITCHER BARS ────────────────────────────── */
+    .style-bar {
+      position: fixed;
+      top: var(--nav-height);
+      width: 44px;
+      height: calc(100vh - var(--nav-height));
+      z-index: 900;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    .style-bar--left  { left: 0; }
+    .style-bar--right { right: 0; }
+
+    .style-bar.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .style-bar__btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 16px 0;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.55;
+      transition: opacity 0.2s;
+    }
+
+    .style-bar__btn:hover   { opacity: 1; }
+    .style-bar__btn:disabled { opacity: 0.2; cursor: default; }
+
+    /* Style panel — full-screen overlay, slides in from right */
+    #style-panel {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1500;
+      transform: translateX(100%);
+      transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    #style-panel.open {
+      transform: translateX(0);
+    }
+
+    #style-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    .style-bar--panel {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      opacity: 1;
+      pointer-events: auto;
+      z-index: 10;
+    }
+
     /* ── KEYFRAMES ───────────────────────────────────────── */
     @keyframes fadeUp {
       to { opacity: 1; transform: translateY(0); }
@@ -922,6 +994,34 @@
   </ul>
   <a href="#contact" id="nav-cta">Get Started</a>
 </nav>
+
+<!-- Style Switcher Bars -->
+<div class="style-bar style-bar--left" id="style-bar-left">
+  <button class="style-bar__btn" id="style-btn-left" aria-label="Previous style" disabled>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M19 12H5M12 19l-7-7 7-7"/>
+    </svg>
+  </button>
+</div>
+<div class="style-bar style-bar--right" id="style-bar-right">
+  <button class="style-bar__btn" id="style-btn-right" aria-label="Next style">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M5 12h14M12 5l7 7-7 7"/>
+    </svg>
+  </button>
+</div>
+
+<!-- Style Panel (slides in) -->
+<div id="style-panel">
+  <div class="style-bar style-bar--panel">
+    <button class="style-bar__btn" id="style-btn-back" aria-label="Back to main style">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+    </button>
+  </div>
+  <iframe id="style-iframe" src="" title="Alternate site style"></iframe>
+</div>
 
 <!-- Hero -->
 <section id="hero">
@@ -1369,6 +1469,44 @@
 
     goTo(0);
     startAuto();
+  })();
+
+  // Style Switcher
+  (function() {
+    const barLeft  = document.getElementById('style-bar-left');
+    const barRight = document.getElementById('style-bar-right');
+    const panel    = document.getElementById('style-panel');
+    const iframe   = document.getElementById('style-iframe');
+    const btnRight = document.getElementById('style-btn-right');
+    const btnBack  = document.getElementById('style-btn-back');
+    const hero     = document.getElementById('hero');
+
+    const STYLES = [
+      { url: 'https://noktollc.github.io/NOKTOFABLE/' }
+    ];
+
+    // Show/hide bars based on hero visibility
+    const heroObs = new IntersectionObserver((entries) => {
+      const visible = entries[0].isIntersecting;
+      barLeft.classList.toggle('visible', visible);
+      barRight.classList.toggle('visible', visible);
+    }, { threshold: 0.01 });
+    heroObs.observe(hero);
+
+    // Open panel
+    btnRight.addEventListener('click', () => {
+      if (!iframe.src || iframe.src === window.location.href) {
+        iframe.src = STYLES[0].url;
+      }
+      panel.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    });
+
+    // Close panel
+    btnBack.addEventListener('click', () => {
+      panel.classList.remove('open');
+      document.body.style.overflow = '';
+    });
   })();
 
   // Contact form
