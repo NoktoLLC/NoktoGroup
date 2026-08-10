@@ -904,9 +904,8 @@
       transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    #style-panel.open {
-      transform: translateX(0);
-    }
+    #style-panel.from-left  { transform: translateX(-100%); }
+    #style-panel.open       { transform: translateX(0); }
 
     #style-iframe {
       width: 100%;
@@ -918,12 +917,14 @@
     .style-bar--panel {
       position: absolute;
       top: 0;
-      left: 0;
       height: 100vh;
       opacity: 1;
       pointer-events: auto;
       z-index: 10;
     }
+
+    .style-bar--panel-left  { left: 0; }
+    .style-bar--panel-right { right: 0; }
 
     /* ── KEYFRAMES ───────────────────────────────────────── */
     @keyframes fadeUp {
@@ -997,7 +998,7 @@
 
 <!-- Style Switcher Bars -->
 <div class="style-bar style-bar--left" id="style-bar-left">
-  <button class="style-bar__btn" id="style-btn-left" aria-label="Previous style" disabled>
+  <button class="style-bar__btn" id="style-btn-left" aria-label="Previous style">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
       <path d="M19 12H5M12 19l-7-7 7-7"/>
     </svg>
@@ -1013,10 +1014,19 @@
 
 <!-- Style Panel (slides in) -->
 <div id="style-panel">
-  <div class="style-bar style-bar--panel">
-    <button class="style-bar__btn" id="style-btn-back" aria-label="Back to main style">
+  <!-- Back arrow for right-side panel (NOKTOFABLE) — left side -->
+  <div class="style-bar style-bar--panel style-bar--panel-left" id="style-panel-back-left">
+    <button class="style-bar__btn" id="style-btn-back-left" aria-label="Back to main style">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+    </button>
+  </div>
+  <!-- Back arrow for left-side panel (nokto-fashion) — right side -->
+  <div class="style-bar style-bar--panel style-bar--panel-right" id="style-panel-back-right">
+    <button class="style-bar__btn" id="style-btn-back-right" aria-label="Back to main style">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 12h14M12 5l7 7-7 7"/>
       </svg>
     </button>
   </div>
@@ -1473,17 +1483,22 @@
 
   // Style Switcher
   (function() {
-    const barLeft  = document.getElementById('style-bar-left');
-    const barRight = document.getElementById('style-bar-right');
-    const panel    = document.getElementById('style-panel');
-    const iframe   = document.getElementById('style-iframe');
-    const btnRight = document.getElementById('style-btn-right');
-    const btnBack  = document.getElementById('style-btn-back');
-    const hero     = document.getElementById('hero');
+    const barLeft       = document.getElementById('style-bar-left');
+    const barRight      = document.getElementById('style-bar-right');
+    const panel         = document.getElementById('style-panel');
+    const iframe        = document.getElementById('style-iframe');
+    const btnLeft       = document.getElementById('style-btn-left');
+    const btnRight      = document.getElementById('style-btn-right');
+    const btnBackLeft   = document.getElementById('style-btn-back-left');
+    const btnBackRight  = document.getElementById('style-btn-back-right');
+    const backBarLeft   = document.getElementById('style-panel-back-left');
+    const backBarRight  = document.getElementById('style-panel-back-right');
+    const hero          = document.getElementById('hero');
 
-    const STYLES = [
-      { url: 'https://noktollc.github.io/NOKTOFABLE/' }
-    ];
+    const STYLES = {
+      right: 'https://noktollc.github.io/NOKTOFABLE/',
+      left:  'https://noktollc.github.io/nokto-fashion/'
+    };
 
     // Show/hide bars based on hero visibility
     const heroObs = new IntersectionObserver((entries) => {
@@ -1493,20 +1508,28 @@
     }, { threshold: 0.01 });
     heroObs.observe(hero);
 
-    // Open panel
-    btnRight.addEventListener('click', () => {
-      if (!iframe.src || iframe.src === window.location.href) {
-        iframe.src = STYLES[0].url;
-      }
+    function openPanel(direction) {
+      iframe.src = STYLES[direction];
+      panel.classList.remove('from-left', 'open');
+      if (direction === 'left') panel.classList.add('from-left');
+      // Force reflow so transition fires
+      panel.getBoundingClientRect();
       panel.classList.add('open');
       document.body.style.overflow = 'hidden';
-    });
+      backBarLeft.style.display  = direction === 'right' ? 'flex' : 'none';
+      backBarRight.style.display = direction === 'left'  ? 'flex' : 'none';
+    }
 
-    // Close panel
-    btnBack.addEventListener('click', () => {
+    function closePanel() {
       panel.classList.remove('open');
       document.body.style.overflow = '';
-    });
+      setTimeout(() => { iframe.src = ''; }, 700);
+    }
+
+    btnRight.addEventListener('click', () => openPanel('right'));
+    btnLeft.addEventListener('click',  () => openPanel('left'));
+    btnBackLeft.addEventListener('click',  closePanel);
+    btnBackRight.addEventListener('click', closePanel);
   })();
 
   // Contact form
