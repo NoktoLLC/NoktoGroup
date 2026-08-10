@@ -908,11 +908,25 @@
     #style-panel.from-left  { transform: translateX(-100%); }
     #style-panel.open       { transform: translateX(0); }
 
-    #style-iframe {
+    #style-frames {
+      position: absolute;
+      inset: 0;
+    }
+
+    #style-frames iframe {
+      position: absolute;
+      inset: 0;
       width: 100%;
       height: 100%;
       border: none;
-      display: block;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      pointer-events: none;
+    }
+
+    #style-frames iframe.active {
+      opacity: 1;
+      pointer-events: auto;
     }
 
     .style-bar--panel {
@@ -1029,7 +1043,10 @@
       </svg>
     </button>
   </div>
-  <iframe id="style-iframe" src="" title="Alternate site style"></iframe>
+  <div id="style-frames">
+    <iframe id="style-iframe-noktofable"   src="https://noktollc.github.io/NOKTOFABLE/"    title="NOKTOFABLE style"></iframe>
+    <iframe id="style-iframe-nokto-fashion" src="https://noktollc.github.io/nokto-fashion/" title="nokto-fashion style"></iframe>
+  </div>
 </div>
 
 <!-- Hero -->
@@ -1482,24 +1499,28 @@
 
   // Style Switcher
   (function() {
-    const barLeft      = document.getElementById('style-bar-left');
-    const barRight     = document.getElementById('style-bar-right');
-    const panel        = document.getElementById('style-panel');
-    const iframe       = document.getElementById('style-iframe');
-    const btnLeft      = document.getElementById('style-btn-left');
-    const btnRight     = document.getElementById('style-btn-right');
+    const barLeft       = document.getElementById('style-bar-left');
+    const barRight      = document.getElementById('style-bar-right');
+    const panel         = document.getElementById('style-panel');
+    const btnLeft       = document.getElementById('style-btn-left');
+    const btnRight      = document.getElementById('style-btn-right');
     const panelBtnLeft  = document.getElementById('style-panel-btn-left');
     const panelBtnRight = document.getElementById('style-panel-btn-right');
-    const hero         = document.getElementById('hero');
+    const hero          = document.getElementById('hero');
 
-    // Cycle order: nokto-fashion → main → NOKTOFABLE → nokto-fashion → ...
+    // Cycle order: nokto-fashion → main → NOKTOFABLE → …
     const CYCLE = [
-      { id: 'nokto-fashion', url: 'https://noktollc.github.io/nokto-fashion/' },
-      { id: 'main',          url: null },
-      { id: 'NOKTOFABLE',    url: 'https://noktollc.github.io/NOKTOFABLE/' }
+      { id: 'nokto-fashion', iframe: document.getElementById('style-iframe-nokto-fashion') },
+      { id: 'main',          iframe: null },
+      { id: 'NOKTOFABLE',    iframe: document.getElementById('style-iframe-noktofable') }
     ];
 
     let currentIdx = 1; // start at 'main'
+
+    function setActive(iframe) {
+      CYCLE.forEach(s => { if (s.iframe) s.iframe.classList.remove('active'); });
+      if (iframe) iframe.classList.add('active');
+    }
 
     // Show/hide main bars based on hero visibility
     const heroObs = new IntersectionObserver((entries) => {
@@ -1515,36 +1536,26 @@
       currentIdx = idx;
 
       if (style.id === 'main') {
-        // Close panel
         panel.classList.remove('open');
         document.body.style.overflow = '';
-        setTimeout(() => { iframe.src = ''; }, 700);
         return;
       }
 
-      // Switch iframe with a quick fade if panel already open
-      if (panel.classList.contains('open')) {
-        iframe.style.opacity = '0';
-        setTimeout(() => {
-          iframe.src = style.url;
-          iframe.style.opacity = '1';
-        }, 220);
-      } else {
+      setActive(style.iframe);
+
+      if (!panel.classList.contains('open')) {
         // Initial open — slide in from appropriate direction
-        iframe.src = style.url;
         panel.classList.remove('from-left', 'open');
-        if (idx < 1) panel.classList.add('from-left'); // nokto-fashion is left of main
+        if (idx < 1) panel.classList.add('from-left');
         panel.getBoundingClientRect(); // force reflow
         panel.classList.add('open');
         document.body.style.overflow = 'hidden';
       }
+      // If panel already open, setActive already handled the crossfade via CSS
     }
 
-    // Main site bars
-    btnRight.addEventListener('click', () => goTo(currentIdx + 1));
-    btnLeft.addEventListener('click',  () => goTo(currentIdx - 1));
-
-    // Panel bars
+    btnRight.addEventListener('click',      () => goTo(currentIdx + 1));
+    btnLeft.addEventListener('click',       () => goTo(currentIdx - 1));
     panelBtnRight.addEventListener('click', () => goTo(currentIdx + 1));
     panelBtnLeft.addEventListener('click',  () => goTo(currentIdx - 1));
   })();
