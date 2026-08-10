@@ -1014,17 +1014,15 @@
 
 <!-- Style Panel (slides in) -->
 <div id="style-panel">
-  <!-- Back arrow for right-side panel (NOKTOFABLE) — left side -->
-  <div class="style-bar style-bar--panel style-bar--panel-left" id="style-panel-back-left">
-    <button class="style-bar__btn" id="style-btn-back-left" aria-label="Back to main style">
+  <div class="style-bar style-bar--panel style-bar--panel-left">
+    <button class="style-bar__btn" id="style-panel-btn-left" aria-label="Previous style">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M19 12H5M12 19l-7-7 7-7"/>
       </svg>
     </button>
   </div>
-  <!-- Back arrow for left-side panel (nokto-fashion) — right side -->
-  <div class="style-bar style-bar--panel style-bar--panel-right" id="style-panel-back-right">
-    <button class="style-bar__btn" id="style-btn-back-right" aria-label="Back to main style">
+  <div class="style-bar style-bar--panel style-bar--panel-right">
+    <button class="style-bar__btn" id="style-panel-btn-right" aria-label="Next style">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M5 12h14M12 5l7 7-7 7"/>
       </svg>
@@ -1483,24 +1481,26 @@
 
   // Style Switcher
   (function() {
-    const barLeft       = document.getElementById('style-bar-left');
-    const barRight      = document.getElementById('style-bar-right');
-    const panel         = document.getElementById('style-panel');
-    const iframe        = document.getElementById('style-iframe');
-    const btnLeft       = document.getElementById('style-btn-left');
-    const btnRight      = document.getElementById('style-btn-right');
-    const btnBackLeft   = document.getElementById('style-btn-back-left');
-    const btnBackRight  = document.getElementById('style-btn-back-right');
-    const backBarLeft   = document.getElementById('style-panel-back-left');
-    const backBarRight  = document.getElementById('style-panel-back-right');
-    const hero          = document.getElementById('hero');
+    const barLeft      = document.getElementById('style-bar-left');
+    const barRight     = document.getElementById('style-bar-right');
+    const panel        = document.getElementById('style-panel');
+    const iframe       = document.getElementById('style-iframe');
+    const btnLeft      = document.getElementById('style-btn-left');
+    const btnRight     = document.getElementById('style-btn-right');
+    const panelBtnLeft  = document.getElementById('style-panel-btn-left');
+    const panelBtnRight = document.getElementById('style-panel-btn-right');
+    const hero         = document.getElementById('hero');
 
-    const STYLES = {
-      right: 'https://noktollc.github.io/NOKTOFABLE/',
-      left:  'https://noktollc.github.io/nokto-fashion/'
-    };
+    // Cycle order: nokto-fashion → main → NOKTOFABLE → nokto-fashion → ...
+    const CYCLE = [
+      { id: 'nokto-fashion', url: 'https://noktollc.github.io/nokto-fashion/' },
+      { id: 'main',          url: null },
+      { id: 'NOKTOFABLE',    url: 'https://noktollc.github.io/NOKTOFABLE/' }
+    ];
 
-    // Show/hide bars based on hero visibility
+    let currentIdx = 1; // start at 'main'
+
+    // Show/hide main bars based on hero visibility
     const heroObs = new IntersectionObserver((entries) => {
       const visible = entries[0].isIntersecting;
       barLeft.classList.toggle('visible', visible);
@@ -1508,28 +1508,44 @@
     }, { threshold: 0.01 });
     heroObs.observe(hero);
 
-    function openPanel(direction) {
-      iframe.src = STYLES[direction];
-      panel.classList.remove('from-left', 'open');
-      if (direction === 'left') panel.classList.add('from-left');
-      // Force reflow so transition fires
-      panel.getBoundingClientRect();
-      panel.classList.add('open');
-      document.body.style.overflow = 'hidden';
-      backBarLeft.style.display  = direction === 'right' ? 'flex' : 'none';
-      backBarRight.style.display = direction === 'left'  ? 'flex' : 'none';
+    function goTo(idx) {
+      idx = ((idx % CYCLE.length) + CYCLE.length) % CYCLE.length;
+      const style = CYCLE[idx];
+      currentIdx = idx;
+
+      if (style.id === 'main') {
+        // Close panel
+        panel.classList.remove('open');
+        document.body.style.overflow = '';
+        setTimeout(() => { iframe.src = ''; }, 700);
+        return;
+      }
+
+      // Switch iframe with a quick fade if panel already open
+      if (panel.classList.contains('open')) {
+        iframe.style.opacity = '0';
+        setTimeout(() => {
+          iframe.src = style.url;
+          iframe.style.opacity = '1';
+        }, 220);
+      } else {
+        // Initial open — slide in from appropriate direction
+        iframe.src = style.url;
+        panel.classList.remove('from-left', 'open');
+        if (idx < 1) panel.classList.add('from-left'); // nokto-fashion is left of main
+        panel.getBoundingClientRect(); // force reflow
+        panel.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
     }
 
-    function closePanel() {
-      panel.classList.remove('open');
-      document.body.style.overflow = '';
-      setTimeout(() => { iframe.src = ''; }, 700);
-    }
+    // Main site bars
+    btnRight.addEventListener('click', () => goTo(currentIdx + 1));
+    btnLeft.addEventListener('click',  () => goTo(currentIdx - 1));
 
-    btnRight.addEventListener('click', () => openPanel('right'));
-    btnLeft.addEventListener('click',  () => openPanel('left'));
-    btnBackLeft.addEventListener('click',  closePanel);
-    btnBackRight.addEventListener('click', closePanel);
+    // Panel bars
+    panelBtnRight.addEventListener('click', () => goTo(currentIdx + 1));
+    panelBtnLeft.addEventListener('click',  () => goTo(currentIdx - 1));
   })();
 
   // Contact form
